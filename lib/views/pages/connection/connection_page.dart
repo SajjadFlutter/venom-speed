@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/images.dart';
 import '../../../main.dart';
 import '../signin/signin_page.dart';
-import '../slelect_config/select_config_page.dart';
+import '../config_selection/select_config_page.dart';
 
 class ConnectionPage extends StatelessWidget {
   const ConnectionPage({super.key});
@@ -44,7 +45,7 @@ class ConnectionPage extends StatelessWidget {
               title: Text('Select Config', style: textTheme.labelMedium),
               onTap: () {
                 var route = MaterialPageRoute(
-                    builder: (context) => const SelectConfigPage());
+                    builder: (context) => const ConfigSelectionPage());
                 Navigator.push(context, route);
               },
             ),
@@ -60,7 +61,10 @@ class ConnectionPage extends StatelessWidget {
           padding: const EdgeInsets.only(right: 6.0),
           child: Text(
             'Venom Speed',
-            style: TextStyle(color: Colors.grey.shade300),
+            style: TextStyle(
+              fontFamily: 'lora',
+              color: Colors.grey.shade300,
+            ),
           ),
         ),
         actions: [
@@ -76,7 +80,7 @@ class ConnectionPage extends StatelessWidget {
                   color: cardColor,
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: Image.asset('assets/icons/menu.png', width: 20.0),
+                child: Image.asset(Images.menu, width: 20.0),
               ),
             ),
           ),
@@ -88,32 +92,40 @@ class ConnectionPage extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(height: height * 0.04),
-            // selected config
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 18.0),
-              decoration: BoxDecoration(
-                color: cardColor,
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Image.asset(
-                        'assets/countries/france.png',
-                        width: 48.0,
-                      ),
-                      const SizedBox(width: 15.0),
-                      Text(
-                        'فرانسه',
-                        style: textTheme.labelMedium,
-                      ),
-                    ],
-                  ),
-                  const Text('110ms')
-                ],
+            // config selection button
+            GestureDetector(
+              onTap: () {
+                // go to config selection page
+                var route = MaterialPageRoute(
+                    builder: (context) => const ConfigSelectionPage());
+                Navigator.push(context, route);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 20.0, horizontal: 18.0),
+                decoration: BoxDecoration(
+                  color: cardColor,
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(
+                          Images.franceImage,
+                          width: 48.0,
+                        ),
+                        const SizedBox(width: 15.0),
+                        Text(
+                          'فرانسه',
+                          style: textTheme.labelMedium,
+                        ),
+                      ],
+                    ),
+                    const Text('110ms')
+                  ],
+                ),
               ),
             ),
             SizedBox(height: height * 0.06),

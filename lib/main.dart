@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'common/theme/my_theme.dart';
-import 'views/pages/connection/connection_page.dart';
+import 'views/pages/signin/signin_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         Locale('fa'), // persian(farsi)
         Locale('en'), // English
       ],
-      home: const ConnectionPage(),
+      home: const SignInPage(),
     );
   }
 

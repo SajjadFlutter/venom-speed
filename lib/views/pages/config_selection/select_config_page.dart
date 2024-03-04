@@ -5,8 +5,8 @@ import '../../../configs_data/configs_data_list.dart';
 import '../../../controllers/index_controller.dart';
 import 'widgets/config_item.dart';
 
-class SelectConfigPage extends StatelessWidget {
-  const SelectConfigPage({super.key});
+class ConfigSelectionPage extends StatelessWidget {
+  const ConfigSelectionPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,10 @@ class SelectConfigPage extends StatelessWidget {
           padding: const EdgeInsets.only(right: 6.0),
           child: Text(
             'Venom Speed',
-            style: TextStyle(color: Colors.grey.shade300),
+            style: TextStyle(
+              fontFamily: 'lora',
+              color: Colors.grey.shade300,
+            ),
           ),
         ),
         actions: [

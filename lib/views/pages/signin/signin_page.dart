@@ -167,14 +167,37 @@ class _SignInPageState extends State<SignInPage> {
                             return null;
                           },
                         ),
-                        SizedBox(height: height * 0.015),
+                        SizedBox(height: height * 0.01),
                         // accept the terms
                         Padding(
                           padding: const EdgeInsets.only(right: 30.0),
-                          child: Text('با ورود شما شرایط و قوانین را می پذیرید',
-                              style: textTheme.labelMedium),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('با ورود شما شرایط و قوانین را می پذیرید',
+                                  style: textTheme.labelMedium),
+                              const SizedBox(height: 10.0),
+                              // buy subscription button
+                              SizedBox(
+                                width: 150,
+                                height: 40,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF178F1D),
+                                    elevation: 0.0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                  onPressed: () {},
+                                  child: Text('خرید اشتراک',
+                                      style: textTheme.labelMedium),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(height: height * 0.05),
+                        SizedBox(height: height * 0.02),
                         // sign in button
                         SizedBox(
                           width: double.infinity,
