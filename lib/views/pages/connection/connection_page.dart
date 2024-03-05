@@ -1,12 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:ripple_wave/ripple_wave.dart';
 
 import '../../../core/constants/images.dart';
 import '../../../main.dart';
-import '../signin/signin_page.dart';
 import '../config_selection/select_config_page.dart';
 
-class ConnectionPage extends StatelessWidget {
+class ConnectionPage extends StatefulWidget {
   const ConnectionPage({super.key});
+
+  @override
+  State<ConnectionPage> createState() => _ConnectionPageState();
+}
+
+late AnimationController animationController;
+
+void start() {
+  animationController.repeat();
+}
+
+void stop() {
+  animationController.stop();
+}
+
+class _ConnectionPageState extends State<ConnectionPage>
+    with SingleTickerProviderStateMixin {
+  @override
+  void initState() {
+    animationController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    super.initState();
+  }
+
+  bool isLoading = false;
+  bool isComplete = false;
+  bool isClicked = false;
+
+  loadingState() {
+    isLoading = true;
+    setState(() {});
+  }
+
+  completeState() {
+    Future.delayed(
+      const Duration(seconds: 3),
+      () {
+        isLoading = false;
+        isComplete = true;
+        setState(() {});
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,37 +65,13 @@ class ConnectionPage extends StatelessWidget {
     // device size
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+    // controller
+    // final VisibleController visibleController = Get.put(VisibleController());
 
     return Scaffold(
       backgroundColor: scaffoldBackgroundColor,
       drawer: Drawer(
         backgroundColor: scaffoldBackgroundColor,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ListTile(
-              leading:
-                  const Icon(Icons.arrow_back_rounded, color: Colors.white),
-              title: Text('Sign In', style: textTheme.labelMedium),
-              onTap: () {
-                var route =
-                    MaterialPageRoute(builder: (context) => const SignInPage());
-                Navigator.push(context, route);
-              },
-            ),
-            const Divider(color: Colors.white),
-            ListTile(
-              leading:
-                  const Icon(Icons.arrow_back_rounded, color: Colors.white),
-              title: Text('Select Config', style: textTheme.labelMedium),
-              onTap: () {
-                var route = MaterialPageRoute(
-                    builder: (context) => const ConfigSelectionPage());
-                Navigator.push(context, route);
-              },
-            ),
-          ],
-        ),
       ),
       // appbar
       appBar: AppBar(
@@ -130,17 +151,67 @@ class ConnectionPage extends StatelessWidget {
             ),
             SizedBox(height: height * 0.06),
             // show state connection
-            Text('متصل', style: textTheme.labelMedium),
+            Text(
+                isLoading == true
+                    ? 'در حال اتصال...'
+                    : isComplete == true
+                        ? 'متصل'
+                        : 'عدم اتصال',
+                style: textTheme.labelMedium),
             // power button
-            Container(
-              margin: const EdgeInsets.only(top: 18.0, bottom: 12.0),
-              padding: const EdgeInsets.all(65.0),
-              decoration: BoxDecoration(
-                color: cardColor,
-                shape: BoxShape.circle,
-                border: Border.all(color: primaryColor, width: 8.0),
-              ),
-              child: Image.asset('assets/icons/power.png', width: 80.0),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Visibility(
+                  visible: isLoading,
+                  child: SizedBox(
+                    width: 300,
+                    child: RippleWave(
+                      animationController: animationController,
+                      repeat: true,
+                      color: Colors.white,
+                      childTween: Tween(begin: 1.0, end: 1.0),
+                      child: Container(),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    loadingState();
+                    completeState();
+
+                    if (isComplete == true) {
+                      isComplete = false;
+                      setState(() {});
+                    }
+
+                    print(isLoading);
+                    print(isComplete);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 20.0),
+                    padding: const EdgeInsets.all(60.0),
+                    decoration: BoxDecoration(
+                      color: cardColor,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: isLoading == true
+                              ? Colors.transparent
+                              : isLoading == false && isComplete == true
+                                  ? const Color(0xFF178F1D)
+                                  : primaryColor,
+                          width: 8.0),
+                    ),
+                    child: Image.asset(
+                      Images.power,
+                      width: 80.0,
+                      color: isComplete == true
+                          ? const Color(0xFF178F1D)
+                          : primaryColor,
+                    ),
+                  ),
+                ),
+              ],
             ),
             // connection duration
             const Text('00:42:54', style: TextStyle(fontSize: 30.0)),
