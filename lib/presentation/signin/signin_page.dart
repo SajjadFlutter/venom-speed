@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/images.dart';
 import '../../../main.dart';
-import '../connection/connection_page.dart';
+import '../connection/view/connection_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});

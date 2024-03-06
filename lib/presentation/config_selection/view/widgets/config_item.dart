@@ -25,6 +25,8 @@ class ConfigItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         indexController.changeIndex(index);
+        print(index);
+        print(customConfigsDataList[index].config);
       },
       child: Obx(
         () => Container(

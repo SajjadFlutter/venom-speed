@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 import '../../../configs_data/configs_data_list.dart';
 import '../../../controllers/index_controller.dart';
+import '../../../core/constants/images.dart';
+import '../../add_config/view/add_config_page.dart';
 import 'widgets/config_item.dart';
 
 class ConfigSelectionPage extends StatelessWidget {
@@ -22,6 +24,24 @@ class ConfigSelectionPage extends StatelessWidget {
       backgroundColor: scaffoldBackgroundColor,
       drawer: Drawer(
         backgroundColor: scaffoldBackgroundColor,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ListTile(
+              onTap: () {
+                var route = MaterialPageRoute(
+                    builder: (context) => const AddConfigPage());
+                Navigator.push(context, route);
+              },
+              leading:
+                  const Icon(Icons.arrow_back_rounded, color: Colors.white),
+              title: const Text(
+                'افزودن کانفیگ',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
       ),
       // appbar
       appBar: AppBar(
@@ -51,7 +71,7 @@ class ConfigSelectionPage extends StatelessWidget {
                   color: cardColor,
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: Image.asset('assets/icons/menu.png', width: 20.0),
+                child: Image.asset(Images.menu, width: 20.0),
               ),
             ),
           ),

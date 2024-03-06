@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ripple_wave/ripple_wave.dart';
 
-import '../../../core/constants/images.dart';
-import '../../../main.dart';
-import '../config_selection/select_config_page.dart';
+import '../../../../core/constants/images.dart';
+import '../../../../main.dart';
+import '../../config_selection/view/config_selection_page.dart';
 
 class ConnectionPage extends StatefulWidget {
   const ConnectionPage({super.key});
@@ -184,9 +184,6 @@ class _ConnectionPageState extends State<ConnectionPage>
                       isComplete = false;
                       setState(() {});
                     }
-
-                    print(isLoading);
-                    print(isComplete);
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 20.0),
