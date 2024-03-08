@@ -31,6 +31,7 @@ class _ConnectionPageState extends State<ConnectionPage>
   String configLink = '';
 
   FlutterV2ray? flutterV2ray;
+  var v2rayStatus = ValueNotifier<V2RayStatus>(V2RayStatus());
   V2RayURL? v2rayURL;
 
   String status = 'DISCONNECTED';
@@ -40,7 +41,10 @@ class _ConnectionPageState extends State<ConnectionPage>
     flutterV2ray = FlutterV2ray(onStatusChanged: (status) {
       setState(() {
         this.status = status.state;
+        v2rayStatus.value = status;
       });
+      print(v2rayStatus.value.download);
+      print(v2rayStatus.value.upload);
     });
 
     await flutterV2ray!.initializeV2Ray();
@@ -213,7 +217,11 @@ class _ConnectionPageState extends State<ConnectionPage>
             ),
             SizedBox(height: height * 0.05),
             // speed test
-            SpeedTest(textTheme: textTheme),
+            SpeedTest(
+              textTheme: textTheme,
+              uploadValue: v2rayStatus.value.upload,
+              downloadValue: v2rayStatus.value.download,
+            ),
             SizedBox(height: height * 0.07),
             // package size
             Column(

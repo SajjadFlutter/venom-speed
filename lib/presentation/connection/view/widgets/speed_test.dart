@@ -6,12 +6,24 @@ class SpeedTest extends StatelessWidget {
   const SpeedTest({
     super.key,
     required this.textTheme,
+    required this.uploadValue,
+    required this.downloadValue,
   });
 
   final TextTheme textTheme;
+  final String uploadValue;
+  final String downloadValue;
 
   @override
   Widget build(BuildContext context) {
+    var uploadValueList = uploadValue.split(' ');
+    var uploadValue_number = uploadValueList[0];
+    var uploadValue_text = uploadValueList[1];
+
+    var downloadValueList = downloadValue.split(' ');
+    var downloadValue_number = downloadValueList[0];
+    var downloadValue_text = downloadValueList[1];
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -25,12 +37,14 @@ class SpeedTest extends StatelessWidget {
                 Directionality(
                   textDirection: TextDirection.ltr,
                   child: RichText(
-                    text: const TextSpan(
+                    text: TextSpan(
                       children: [
                         TextSpan(
-                            text: '35.8 ', style: TextStyle(fontSize: 17.0)),
+                            text: uploadValue_number,
+                            style: const TextStyle(fontSize: 17.0)),
                         TextSpan(
-                            text: 'KB/s', style: TextStyle(fontSize: 12.0)),
+                            text: ' $uploadValue_text/s',
+                            style: const TextStyle(fontSize: 12.0)),
                       ],
                     ),
                   ),
@@ -51,12 +65,14 @@ class SpeedTest extends StatelessWidget {
                 Directionality(
                   textDirection: TextDirection.ltr,
                   child: RichText(
-                    text: const TextSpan(
+                    text: TextSpan(
                       children: [
                         TextSpan(
-                            text: '55.6 ', style: TextStyle(fontSize: 17.0)),
+                            text: downloadValue_number,
+                            style: const TextStyle(fontSize: 17.0)),
                         TextSpan(
-                            text: 'KB/s', style: TextStyle(fontSize: 12.0)),
+                            text: ' $downloadValue_text/s',
+                            style: const TextStyle(fontSize: 12.0)),
                       ],
                     ),
                   ),
