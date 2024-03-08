@@ -1,7 +1,7 @@
 import '../core/constants/images.dart';
-import '../models/vpn_config_model.dart';
+import '../infrastructure/models/vpn_config_model.dart';
 
-List<VPNConfigModel> configsDataList = [
+List<VPNConfigModel> serverConfigsDataList = [
   VPNConfigModel(
     countryImage: Images.germanyImage,
     countryName: 'آلمان',
@@ -64,4 +64,6 @@ List<VPNConfigModel> configsDataList = [
   ),
 ];
 
-List<VPNConfigModel> customConfigsDataList = [];
+List<VPNConfigModel> manualConfigsDataList = [];
+
+List<VPNConfigModel> mainConfigsDataList = serverConfigsDataList;

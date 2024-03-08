@@ -1,16 +1,24 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'common/bloc/change_index_cubit.dart';
 import 'common/theme/my_theme.dart';
 import 'presentation/add_config/bloc/add_config_bloc.dart';
-import 'presentation/add_config/view/add_config_page.dart';
+import 'presentation/connection/bloc/timer_cubit.dart';
+import 'presentation/signin/signin_page.dart';
 
 void main() {
   runApp(
-    BlocProvider(
-      create: (context) => AddConfigBloc(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => AddConfigBloc()),
+        BlocProvider(create: (context) => ChangeIndexCubit()),
+        BlocProvider(create: (context) => TimerCubit()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -35,7 +43,7 @@ class MyApp extends StatelessWidget {
         Locale('fa'), // persian(farsi)
         Locale('en'), // English
       ],
-      home: const AddConfigPage(),
+      home: const SignInPage(),
     );
   }
 

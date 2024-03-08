@@ -12,7 +12,7 @@ class MyTheme {
       ),
       labelLarge: TextStyle(
         color: Colors.grey.shade900,
-        fontSize: 18.0,
+        fontSize: 16.0,
       ),
       labelMedium: TextStyle(
         color: Colors.grey.shade100,
@@ -22,6 +22,14 @@ class MyTheme {
         color: Colors.grey.shade100,
         fontSize: 12.0,
       ),
+    ),
+    inputDecorationTheme: const InputDecorationTheme(
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Color(0xFFffb11b), width: 1.5),
+        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+      ),
+
+      // این بخش می‌تواند دیگر ویژگی‌های استایل را نیز شامل شود
     ),
     scaffoldBackgroundColor: const Color(0xff07074f),
     primaryColor: const Color(0xFFffb11b),

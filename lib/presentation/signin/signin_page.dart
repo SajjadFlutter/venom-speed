@@ -1,7 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constants/images.dart';
-import '../../../main.dart';
+import '../../main.dart';
 import '../connection/view/connection_page.dart';
 
 class SignInPage extends StatefulWidget {
@@ -16,6 +19,12 @@ class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkSignInStatus();
+  }
 
   @override
   void dispose() {
@@ -106,7 +115,7 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 35.0, vertical: 20.0),
+                                horizontal: 30.0, vertical: 18.0),
                             hintText: 'نام کاربری',
                             hintStyle: const TextStyle(
                               fontSize: 15.0,
@@ -140,7 +149,7 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 35.0, vertical: 20.0),
+                                horizontal: 30.0, vertical: 18.0),
                             hintText: 'رمز عبور',
                             hintStyle: const TextStyle(
                               fontSize: 15.0,
@@ -167,7 +176,7 @@ class _SignInPageState extends State<SignInPage> {
                             return null;
                           },
                         ),
-                        SizedBox(height: height * 0.01),
+                        SizedBox(height: height * 0.015),
                         // accept the terms
                         Padding(
                           padding: const EdgeInsets.only(right: 30.0),
@@ -186,7 +195,7 @@ class _SignInPageState extends State<SignInPage> {
                                     backgroundColor: const Color(0xFF178F1D),
                                     elevation: 0.0,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderRadius: BorderRadius.circular(15.0),
                                     ),
                                   ),
                                   onPressed: () {},
@@ -197,11 +206,11 @@ class _SignInPageState extends State<SignInPage> {
                             ],
                           ),
                         ),
-                        SizedBox(height: height * 0.02),
+                        SizedBox(height: height * 0.025),
                         // sign in button
                         SizedBox(
                           width: double.infinity,
-                          height: 65,
+                          height: 60,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: primaryColor,
@@ -213,7 +222,9 @@ class _SignInPageState extends State<SignInPage> {
                             onPressed: () {
                               // Validate returns true if the form is valid, or false otherwise.
                               if (_formKey.currentState!.validate()) {
-                                // userProvider.callRegisterApi(nameController.text, passwordController.text);
+                                // save data
+                                setSignInStatus(true);
+
                                 var route = MaterialPageRoute(
                                   builder: (context) => const ConnectionPage(),
                                 );
@@ -233,5 +244,26 @@ class _SignInPageState extends State<SignInPage> {
         ),
       ),
     );
+  }
+
+  Future<void> setSignInStatus(bool isSignIn) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isSignIn', isSignIn);
+  }
+
+  Future<bool> getSignInStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isSignIn') ?? false;
+  }
+
+  void _checkSignInStatus() async {
+    bool isSignIn = await getSignInStatus();
+    if (isSignIn) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const ConnectionPage(),
+      ));
+    } else {
+      return;
+    }
   }
 }

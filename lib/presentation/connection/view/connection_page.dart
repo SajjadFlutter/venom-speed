@@ -1,56 +1,96 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
-import 'package:ripple_wave/ripple_wave.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_v2ray/flutter_v2ray.dart';
 
 import '../../../../core/constants/images.dart';
 import '../../../../main.dart';
-import '../../config_selection/view/config_selection_page.dart';
+import '../../../infrastructure/models/vpn_config_model.dart';
+import '../bloc/timer_cubit.dart';
+import 'widgets/selected_config.dart';
+import 'widgets/speed_test.dart';
 
 class ConnectionPage extends StatefulWidget {
   const ConnectionPage({super.key});
+
+  static VPNConfigModel selectedConfig = VPNConfigModel(
+    countryImage: Images.franceImage,
+    countryName: 'فرانسه',
+    config: 'config',
+    ping: '110ms',
+  );
 
   @override
   State<ConnectionPage> createState() => _ConnectionPageState();
 }
 
-late AnimationController animationController;
-
-void start() {
-  animationController.repeat();
-}
-
-void stop() {
-  animationController.stop();
-}
-
 class _ConnectionPageState extends State<ConnectionPage>
     with SingleTickerProviderStateMixin {
-  @override
-  void initState() {
-    animationController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
-    super.initState();
+  String configLink = '';
+
+  FlutterV2ray? flutterV2ray;
+  V2RayURL? v2rayURL;
+
+  String status = 'DISCONNECTED';
+  String ping = '-1';
+
+  Future<void> initV2ray(String config) async {
+    flutterV2ray = FlutterV2ray(onStatusChanged: (status) {
+      setState(() {
+        this.status = status.state;
+      });
+    });
+
+    await flutterV2ray!.initializeV2Ray();
+
+    v2rayURL = FlutterV2ray.parseFromURL(config);
   }
 
-  bool isLoading = false;
-  bool isComplete = false;
-  bool isClicked = false;
+  Future<void> getPnig() async {
+    await flutterV2ray!.getConnectedServerDelay().then((value) {
+      setState(() {
+        ping = '$value ms';
+      });
+    });
+  }
 
-  loadingState() {
-    isLoading = true;
+  Future<void> connect() async {
+    configLink = ConnectionPage.selectedConfig.config!;
+    status = 'LOADING';
     setState(() {});
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (configLink != '') {
+      initV2ray(configLink);
+    }
+
+    // ignore: unnecessary_null_comparison
+    if (await flutterV2ray!.requestPermission() != null) {
+      if (await flutterV2ray!.requestPermission()) {
+        await flutterV2ray!.startV2Ray(
+          remark: v2rayURL!.remark,
+          config: v2rayURL!.getFullConfiguration(),
+          blockedApps: null,
+          bypassSubnets: null,
+          proxyOnly: false,
+        );
+      }
+    }
+
+    BlocProvider.of<TimerCubit>(context).start();
   }
 
-  completeState() {
-    Future.delayed(
-      const Duration(seconds: 3),
-      () {
-        isLoading = false;
-        isComplete = true;
-        setState(() {});
-      },
-    );
+  Future<void> disconnect() async {
+    setState(() {
+      status = '';
+      ping = '';
+    });
+    await flutterV2ray!.stopV2Ray();
+
+    BlocProvider.of<TimerCubit>(context).reset();
   }
 
   @override
@@ -114,167 +154,66 @@ class _ConnectionPageState extends State<ConnectionPage>
           children: [
             SizedBox(height: height * 0.04),
             // config selection button
-            GestureDetector(
-              onTap: () {
-                // go to config selection page
-                var route = MaterialPageRoute(
-                    builder: (context) => const ConfigSelectionPage());
-                Navigator.push(context, route);
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 20.0, horizontal: 18.0),
-                decoration: BoxDecoration(
-                  color: cardColor,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Image.asset(
-                          Images.franceImage,
-                          width: 48.0,
-                        ),
-                        const SizedBox(width: 15.0),
-                        Text(
-                          'فرانسه',
-                          style: textTheme.labelMedium,
-                        ),
-                      ],
-                    ),
-                    const Text('110ms')
-                  ],
-                ),
-              ),
-            ),
+            SelectedConfig(cardColor: cardColor, textTheme: textTheme),
             SizedBox(height: height * 0.06),
             // show state connection
             Text(
-                isLoading == true
+                status == 'LOADING'
                     ? 'در حال اتصال...'
-                    : isComplete == true
+                    : status == 'CONNECTED'
                         ? 'متصل'
                         : 'عدم اتصال',
                 style: textTheme.labelMedium),
             // power button
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Visibility(
-                  visible: isLoading,
-                  child: SizedBox(
-                    width: 300,
-                    child: RippleWave(
-                      animationController: animationController,
-                      repeat: true,
-                      color: Colors.white,
-                      childTween: Tween(begin: 1.0, end: 1.0),
-                      child: Container(),
-                    ),
+            AvatarGlow(
+              glowColor: Colors.white,
+              duration: const Duration(milliseconds: 1800),
+              repeat: true,
+              glowRadiusFactor: 0.3,
+              glowCount: 3,
+              animate: status == 'LOADING',
+              child: GestureDetector(
+                onTap: () {
+                  if (status == 'DISCONNECTED') {
+                    connect();
+                  } else if (status == 'CONNECTED') {
+                    disconnect();
+                  }
+                },
+                child: Container(
+                  width: 216.0,
+                  margin: const EdgeInsets.symmetric(vertical: 20.0),
+                  padding: const EdgeInsets.all(60.0),
+                  decoration: BoxDecoration(
+                    color: cardColor,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                        color: status == 'LOADING'
+                            ? Colors.transparent
+                            : status == 'CONNECTED'
+                                ? const Color(0xFF178F1D)
+                                : primaryColor,
+                        width: 8.0),
+                  ),
+                  child: Image.asset(
+                    Images.power,
+                    width: 80.0,
+                    color: status == 'CONNECTED'
+                        ? const Color(0xFF178F1D)
+                        : primaryColor,
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    loadingState();
-                    completeState();
-
-                    if (isComplete == true) {
-                      isComplete = false;
-                      setState(() {});
-                    }
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 20.0),
-                    padding: const EdgeInsets.all(60.0),
-                    decoration: BoxDecoration(
-                      color: cardColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                          color: isLoading == true
-                              ? Colors.transparent
-                              : isLoading == false && isComplete == true
-                                  ? const Color(0xFF178F1D)
-                                  : primaryColor,
-                          width: 8.0),
-                    ),
-                    child: Image.asset(
-                      Images.power,
-                      width: 80.0,
-                      color: isComplete == true
-                          ? const Color(0xFF178F1D)
-                          : primaryColor,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
             // connection duration
-            const Text('00:42:54', style: TextStyle(fontSize: 30.0)),
-            // speed test
-            SizedBox(height: height * 0.05),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                // upload
-                Row(
-                  children: [
-                    Column(
-                      children: [
-                        Text('آپلود', style: textTheme.labelMedium),
-                        const SizedBox(height: 3.0),
-                        Directionality(
-                          textDirection: TextDirection.ltr,
-                          child: RichText(
-                            text: const TextSpan(
-                              children: [
-                                TextSpan(
-                                    text: '35.8 ',
-                                    style: TextStyle(fontSize: 17.0)),
-                                TextSpan(
-                                    text: 'KB/s',
-                                    style: TextStyle(fontSize: 12.0)),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 15.0),
-                    Image.asset('assets/icons/upload.png', width: 35.0),
-                  ],
-                ),
-                // download
-                Row(
-                  children: [
-                    Column(
-                      children: [
-                        Text('دانلود', style: textTheme.labelMedium),
-                        const SizedBox(height: 3.0),
-                        Directionality(
-                          textDirection: TextDirection.ltr,
-                          child: RichText(
-                            text: const TextSpan(
-                              children: [
-                                TextSpan(
-                                    text: '55.6 ',
-                                    style: TextStyle(fontSize: 17.0)),
-                                TextSpan(
-                                    text: 'KB/s',
-                                    style: TextStyle(fontSize: 12.0)),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 15.0),
-                    Image.asset('assets/icons/upload.png', width: 35.0),
-                  ],
-                ),
-              ],
+            BlocBuilder<TimerCubit, String>(
+              builder: (context, state) {
+                return Text(state, style: const TextStyle(fontSize: 30.0));
+              },
             ),
+            SizedBox(height: height * 0.05),
+            // speed test
+            SpeedTest(textTheme: textTheme),
             SizedBox(height: height * 0.07),
             // package size
             Column(
