@@ -9,7 +9,7 @@ import 'package:venom_speed/presentation/connection/view/connection_page.dart';
 
 import '../../../../configs_data/configs_data_list.dart';
 import '../../../../controllers/index_controller.dart';
-import '../../../../infrastructure/models/vpn_config_model.dart';
+import '../../../../infrastructure/models/vpn_config_model/vpn_config_model.dart';
 import '../../../add_config/bloc/add_config_bloc.dart';
 import '../../../add_config/bloc/add_config_event.dart';
 import '../../../connection/view/widgets/selected_config.dart';
@@ -33,16 +33,20 @@ class ConfigItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         indexController.changeIndex(index);
 
         SelectedConfig.firsTime = false;
 
-        ConnectionPage.selectedConfig = VPNConfigModel(
-          countryImage: mainConfigsDataList[index].countryImage,
-          countryName: mainConfigsDataList[index].countryName,
-          config: mainConfigsDataList[index].config,
-          ping: '110ms',
+        await Hive.box<VPNConfigModel>('VPNConfigModel_Box').putAt(
+          index,
+          VPNConfigModel(
+            countryImage: mainConfigsDataList[index].countryImage,
+            countryName: mainConfigsDataList[index].countryName,
+            config: mainConfigsDataList[index].config,
+            ping: mainConfigsDataList[index].ping,
+            isSelected: true,
+          ),
         );
 
         var route =

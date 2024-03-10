@@ -12,11 +12,14 @@ class VPNConfigModel {
   final String? config;
   @HiveField(3)
   final String? ping;
+  @HiveField(4)
+  final bool? isSelected;
 
   VPNConfigModel({
     required this.countryImage,
     required this.countryName,
     required this.config,
     required this.ping,
+    required this.isSelected,
   });
 }

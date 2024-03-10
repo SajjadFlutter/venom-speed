@@ -6,7 +6,7 @@ import 'package:hive/hive.dart';
 
 import '../../../../common/widgets/custom_icon_button.dart';
 import '../../../core/constants/images.dart';
-import '../../../infrastructure/models/vpn_config_model.dart';
+import '../../../infrastructure/models/vpn_config_model/vpn_config_model.dart';
 import '../bloc/add_config_bloc.dart';
 import '../bloc/add_config_event.dart';
 
@@ -127,6 +127,7 @@ class _AddConfigPageState extends State<AddConfigPage> {
                         countryName: 'آلمان',
                         config: configController.text,
                         ping: '110ms',
+                        isSelected: false,
                       ),
                     );
                   }

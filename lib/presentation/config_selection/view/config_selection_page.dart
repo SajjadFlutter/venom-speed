@@ -7,7 +7,7 @@ import '../../../common/bloc/change_index_cubit.dart';
 import '../../../configs_data/configs_data_list.dart';
 import '../../../controllers/index_controller.dart';
 import '../../../core/constants/images.dart';
-import '../../../infrastructure/models/vpn_config_model.dart';
+import '../../../infrastructure/models/vpn_config_model/vpn_config_model.dart';
 import '../../add_config/bloc/add_config_bloc.dart';
 import '../../add_config/bloc/add_config_state.dart';
 import '../../add_config/view/add_config_page.dart';

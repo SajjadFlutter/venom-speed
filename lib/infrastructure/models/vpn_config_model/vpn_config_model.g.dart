@@ -21,13 +21,14 @@ class VPNConfigModelAdapter extends TypeAdapter<VPNConfigModel> {
       countryName: fields[1] as String?,
       config: fields[2] as String?,
       ping: fields[3] as String?,
+      isSelected: fields[4] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, VPNConfigModel obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.countryImage)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class VPNConfigModelAdapter extends TypeAdapter<VPNConfigModel> {
       ..writeByte(2)
       ..write(obj.config)
       ..writeByte(3)
-      ..write(obj.ping);
+      ..write(obj.ping)
+      ..writeByte(4)
+      ..write(obj.isSelected);
   }
 
   @override

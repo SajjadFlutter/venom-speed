@@ -8,7 +8,7 @@ import 'package:hive/hive.dart';
 
 import '../../../../core/constants/images.dart';
 import '../../../../main.dart';
-import '../../../infrastructure/models/vpn_config_model.dart';
+import '../../../infrastructure/models/vpn_config_model/vpn_config_model.dart';
 import '../bloc/timer_cubit.dart';
 import 'widgets/selected_config.dart';
 import 'widgets/speed_test.dart';
@@ -21,6 +21,7 @@ class ConnectionPage extends StatefulWidget {
     countryName: 'فرانسه',
     config: 'config',
     ping: '110ms',
+    isSelected: false,
   );
 
   @override
@@ -42,6 +43,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
       setState(() {
         this.status = status.state;
         v2rayStatus.value = status;
+        print(status.state);
       });
     });
 
@@ -84,7 +86,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
       }
     }
 
-    print(v2rayURL);
+    print(flutterV2ray);
   }
 
   Future<void> disconnect() async {
@@ -103,14 +105,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
   @override
   void initState() {
     super.initState();
-
-    // get v2rayURL from Hive
-    if (v2rayURL != null) {
-      getv2rayURLfromHive();
-      print(v2rayURL);
-    } else {
-      return;
-    }
+    getSelectedConfigFromHive();
   }
 
   @override
@@ -282,16 +277,14 @@ class _ConnectionPageState extends State<ConnectionPage> {
     );
   }
 
-  Future<void> setv2rayURLinHive(V2RayURL v2rayURL) async {
-    await Hive.box<V2RayURL>('V2RayURL_box').add(v2rayURL);
-  }
-
-  Future<V2RayURL> getv2rayURLfromHive() async {
-    late V2RayURL v2rayURL;
-    Hive.box<V2RayURL>('V2RayURL_box').values.forEach((value) {
-      v2rayURL = value;
-    });
-    return v2rayURL;
+  void getSelectedConfigFromHive() {
+    Hive.box<VPNConfigModel>('VPNConfigModel_Box').values.forEach(
+      (model) {
+        if (model.isSelected == true) {
+          ConnectionPage.selectedConfig = model;
+        }
+      },
+    );
   }
 
   // Future<void> setSignInStatus(int lastExitTime) async {

@@ -1,5 +1,5 @@
 import '../core/constants/images.dart';
-import '../infrastructure/models/vpn_config_model.dart';
+import '../infrastructure/models/vpn_config_model/vpn_config_model.dart';
 
 List<VPNConfigModel> serverConfigsDataList = [
   VPNConfigModel(
@@ -7,60 +7,70 @@ List<VPNConfigModel> serverConfigsDataList = [
     countryName: 'آلمان',
     config: '',
     ping: '110ms',
+    isSelected: false,
   ),
   VPNConfigModel(
     countryImage: Images.franceImage,
     countryName: 'فرانسه',
     config: '',
     ping: '110ms',
+    isSelected: false,
   ),
   VPNConfigModel(
     countryImage: Images.polandImage,
     countryName: 'لهستان',
     config: '',
     ping: '110ms',
+    isSelected: false,
   ),
   VPNConfigModel(
     countryImage: Images.japanImage,
     countryName: 'ژاپن',
     config: '',
     ping: '110ms',
+    isSelected: false,
   ),
   VPNConfigModel(
     countryImage: Images.turkeyImage,
     countryName: 'ترکیه',
     config: '',
     ping: '110ms',
+    isSelected: false,
   ),
   VPNConfigModel(
     countryImage: Images.swedenImage,
     countryName: 'سوئد',
     config: '',
     ping: '110ms',
+    isSelected: false,
   ),
   VPNConfigModel(
     countryImage: Images.polandImage,
     countryName: 'لهستان',
     config: '',
     ping: '110ms',
+    isSelected: false,
   ),
   VPNConfigModel(
     countryImage: Images.japanImage,
     countryName: 'ژاپن',
     config: '',
     ping: '110ms',
+    isSelected: false,
   ),
   VPNConfigModel(
     countryImage: Images.turkeyImage,
     countryName: 'ترکیه',
     config: '',
     ping: '110ms',
+    isSelected: false,
   ),
   VPNConfigModel(
     countryImage: Images.swedenImage,
     countryName: 'سوئد',
     config: '',
     ping: '110ms',
+    isSelected: false,
   ),
 ];
 
