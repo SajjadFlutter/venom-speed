@@ -17,12 +17,12 @@ class SpeedTest extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var uploadValueList = uploadValue.split(' ');
-    var uploadValue_number = uploadValueList[0];
-    var uploadValue_text = uploadValueList[1];
+    var uploadvalueNumber = uploadValueList[0];
+    var uploadvalueText = uploadValueList[1];
 
     var downloadValueList = downloadValue.split(' ');
-    var downloadValue_number = downloadValueList[0];
-    var downloadValue_text = downloadValueList[1];
+    var downloadvalueNumber = downloadValueList[0];
+    var downloadvalueText = downloadValueList[1];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -40,10 +40,10 @@ class SpeedTest extends StatelessWidget {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                            text: uploadValue_number,
+                            text: uploadvalueNumber,
                             style: const TextStyle(fontSize: 17.0)),
                         TextSpan(
-                            text: ' $uploadValue_text/s',
+                            text: ' $uploadvalueText/s',
                             style: const TextStyle(fontSize: 12.0)),
                       ],
                     ),
@@ -68,10 +68,10 @@ class SpeedTest extends StatelessWidget {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                            text: downloadValue_number,
+                            text: downloadvalueNumber,
                             style: const TextStyle(fontSize: 17.0)),
                         TextSpan(
-                            text: ' $downloadValue_text/s',
+                            text: ' $downloadvalueText/s',
                             style: const TextStyle(fontSize: 12.0)),
                       ],
                     ),

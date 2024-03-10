@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 
 import '../../../common/bloc/change_index_cubit.dart';
 import '../../../configs_data/configs_data_list.dart';
 import '../../../controllers/index_controller.dart';
 import '../../../core/constants/images.dart';
+import '../../../infrastructure/models/vpn_config_model.dart';
 import '../../add_config/bloc/add_config_bloc.dart';
 import '../../add_config/bloc/add_config_state.dart';
 import '../../add_config/view/add_config_page.dart';
@@ -83,6 +85,7 @@ class ConfigSelectionPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SelectionListButton(
                       cardColor: cardColor,
@@ -233,6 +236,9 @@ class ManualConfigsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // get Manual Configs from Hive
+    getManualConfigsFromHive();
+
     return Scaffold(
       body: BlocBuilder<AddConfigBloc, AddConfigState>(
         builder: (context, state) {
@@ -269,6 +275,15 @@ class ManualConfigsListWidget extends StatelessWidget {
           color: Colors.grey.shade900,
         ),
       ),
+    );
+  }
+
+  void getManualConfigsFromHive() {
+    manualConfigsDataList.clear();
+    Hive.box<VPNConfigModel>('VPNConfigModel_Box').values.forEach(
+      (model) {
+        manualConfigsDataList.add(model);
+      },
     );
   }
 }

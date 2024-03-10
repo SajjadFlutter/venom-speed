@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:venom_speed/presentation/config_selection/view/config_selection_page.dart';
 import 'package:venom_speed/presentation/connection/view/connection_page.dart';
 
@@ -117,8 +120,11 @@ class ConfigItem extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(right: 12.0),
                       child: GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           manualConfigsDataList.removeAt(index);
+                          await Hive.box<VPNConfigModel>('VPNConfigModel_Box')
+                              .deleteAt(index);
+
                           BlocProvider.of<AddConfigBloc>(context)
                               .add(AddConfigEvent());
                         },

@@ -1,17 +1,22 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'common/bloc/change_index_cubit.dart';
 import 'common/theme/my_theme.dart';
+import 'infrastructure/models/vpn_config_model.dart';
 import 'presentation/add_config/bloc/add_config_bloc.dart';
 import 'presentation/connection/bloc/timer_cubit.dart';
 import 'presentation/signin/signin_page.dart';
 
-void main() {
+void main() async {
+  // init Hive
+  await Hive.initFlutter();
+  Hive.registerAdapter(VPNConfigModelAdapter());
+  await Hive.openBox<VPNConfigModel>('VPNConfigModel_Box');
+
   runApp(
     MultiBlocProvider(
       providers: [

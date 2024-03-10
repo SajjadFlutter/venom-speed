@@ -9,10 +9,12 @@ class SelectedConfig extends StatelessWidget {
     super.key,
     required this.cardColor,
     required this.textTheme,
+    required this.ping,
   });
 
   final Color cardColor;
   final TextTheme textTheme;
+  final String ping;
 
   static bool firsTime = true;
 
@@ -33,7 +35,7 @@ class SelectedConfig extends StatelessWidget {
         Navigator.push(context, route);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 18.0),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 18.0),
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(20.0),
@@ -54,7 +56,7 @@ class SelectedConfig extends StatelessWidget {
                 ),
               ],
             ),
-            Text(ConnectionPage.selectedConfig.ping!)
+            const Text('110ms'),
           ],
         ),
       ),

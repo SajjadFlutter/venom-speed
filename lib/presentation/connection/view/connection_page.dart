@@ -4,6 +4,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:hive/hive.dart';
 
 import '../../../../core/constants/images.dart';
 import '../../../../main.dart';
@@ -26,8 +27,7 @@ class ConnectionPage extends StatefulWidget {
   State<ConnectionPage> createState() => _ConnectionPageState();
 }
 
-class _ConnectionPageState extends State<ConnectionPage>
-    with SingleTickerProviderStateMixin {
+class _ConnectionPageState extends State<ConnectionPage> {
   String configLink = '';
 
   FlutterV2ray? flutterV2ray;
@@ -35,7 +35,7 @@ class _ConnectionPageState extends State<ConnectionPage>
   V2RayURL? v2rayURL;
 
   String status = 'DISCONNECTED';
-  String ping = '-1';
+  String ping = '110ms';
 
   Future<void> initV2ray(String config) async {
     flutterV2ray = FlutterV2ray(onStatusChanged: (status) {
@@ -43,8 +43,6 @@ class _ConnectionPageState extends State<ConnectionPage>
         this.status = status.state;
         v2rayStatus.value = status;
       });
-      print(v2rayStatus.value.download);
-      print(v2rayStatus.value.upload);
     });
 
     await flutterV2ray!.initializeV2Ray();
@@ -55,7 +53,7 @@ class _ConnectionPageState extends State<ConnectionPage>
   Future<void> getPnig() async {
     await flutterV2ray!.getConnectedServerDelay().then((value) {
       setState(() {
-        ping = '$value ms';
+        ping = '${value}ms';
       });
     });
   }
@@ -81,20 +79,38 @@ class _ConnectionPageState extends State<ConnectionPage>
           bypassSubnets: null,
           proxyOnly: false,
         );
+        // start time
+        BlocProvider.of<TimerCubit>(context).start();
       }
     }
 
-    BlocProvider.of<TimerCubit>(context).start();
+    print(v2rayURL);
   }
 
   Future<void> disconnect() async {
-    setState(() {
-      status = '';
-      ping = '';
-    });
-    await flutterV2ray!.stopV2Ray();
+    // ignore: unnecessary_null_comparison
+    if (flutterV2ray!.stopV2Ray() != null) {
+      setState(() {
+        status = '';
+        ping = '';
+      });
+      await flutterV2ray!.stopV2Ray();
 
-    BlocProvider.of<TimerCubit>(context).reset();
+      BlocProvider.of<TimerCubit>(context).reset();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // get v2rayURL from Hive
+    if (v2rayURL != null) {
+      getv2rayURLfromHive();
+      print(v2rayURL);
+    } else {
+      return;
+    }
   }
 
   @override
@@ -158,7 +174,11 @@ class _ConnectionPageState extends State<ConnectionPage>
           children: [
             SizedBox(height: height * 0.04),
             // config selection button
-            SelectedConfig(cardColor: cardColor, textTheme: textTheme),
+            SelectedConfig(
+              cardColor: cardColor,
+              textTheme: textTheme,
+              ping: ping,
+            ),
             SizedBox(height: height * 0.06),
             // show state connection
             Text(
@@ -261,4 +281,35 @@ class _ConnectionPageState extends State<ConnectionPage>
       ),
     );
   }
+
+  Future<void> setv2rayURLinHive(V2RayURL v2rayURL) async {
+    await Hive.box<V2RayURL>('V2RayURL_box').add(v2rayURL);
+  }
+
+  Future<V2RayURL> getv2rayURLfromHive() async {
+    late V2RayURL v2rayURL;
+    Hive.box<V2RayURL>('V2RayURL_box').values.forEach((value) {
+      v2rayURL = value;
+    });
+    return v2rayURL;
+  }
+
+  // Future<void> setSignInStatus(int lastExitTime) async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.setInt('lastExitTime', lastExitTime);
+  // }
+  // Future<int> getSignInStatus() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   return prefs.getInt('lastExitTime') ?? 0;
+  // }
+  // void _checkSignInStatus() async {
+  //   int isSignIn = await getSignInStatus();
+  // if (isSignIn) {
+  //   Navigator.of(context).pushReplacement(MaterialPageRoute(
+  //     builder: (context) => const ConnectionPage(),
+  //   ));
+  // } else {
+  //   return;
+  // }
+  // }
 }

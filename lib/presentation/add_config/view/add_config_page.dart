@@ -1,8 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
 import '../../../../common/widgets/custom_icon_button.dart';
-import '../../../configs_data/configs_data_list.dart';
 import '../../../core/constants/images.dart';
 import '../../../infrastructure/models/vpn_config_model.dart';
 import '../bloc/add_config_bloc.dart';
@@ -117,9 +119,9 @@ class _AddConfigPageState extends State<AddConfigPage> {
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (configController.text.isNotEmpty) {
-                    manualConfigsDataList.add(
+                    await Hive.box<VPNConfigModel>('VPNConfigModel_Box').add(
                       VPNConfigModel(
                         countryImage: Images.germanyImage,
                         countryName: 'آلمان',
