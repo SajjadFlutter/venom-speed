@@ -56,7 +56,7 @@ class SelectedConfig extends StatelessWidget {
                 ),
               ],
             ),
-            const Text('110ms'),
+            Directionality(textDirection: TextDirection.ltr, child: Text(ping)),
           ],
         ),
       ),

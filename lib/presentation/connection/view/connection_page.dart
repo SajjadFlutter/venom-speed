@@ -1,5 +1,8 @@
 // ignore_for_file: use_build_context_synchronously, unnecessary_null_comparison
 
+import 'dart:async';
+import 'dart:io';
+
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,22 +56,19 @@ class _ConnectionPageState extends State<ConnectionPage> {
     v2rayURL = FlutterV2ray.parseFromURL(config);
   }
 
-  Future<void> getPnig() async {
-    await flutterV2ray!.getConnectedServerDelay().then((value) {
-      setState(() {
-        ping = '${value}ms';
+  Future<void> getPing() async {
+    if (flutterV2ray != null) {
+      await flutterV2ray!.getConnectedServerDelay().then((value) {
+        setState(() {
+          ping = '${value}ms';
+        });
       });
-    });
+    }
   }
 
   Future<void> connect() async {
     configLink = ConnectionPage.selectedConfig.config!;
     setConfigLink(ConnectionPage.selectedConfig.config!);
-    print(ConnectionPage.selectedConfig.config!);
-    status = 'LOADING';
-    setState(() {});
-
-    await Future.delayed(const Duration(seconds: 3));
 
     if (configLink != '') {
       initV2ray(configLink);
@@ -83,6 +83,10 @@ class _ConnectionPageState extends State<ConnectionPage> {
           bypassSubnets: null,
           proxyOnly: false,
         );
+        // get ping
+        Timer.periodic(const Duration(seconds: 10), (Timer t) {
+          getPing();
+        });
         // start time
         setConnectionStartTime();
         BlocProvider.of<TimerCubit>(context).startTime();
@@ -99,6 +103,9 @@ class _ConnectionPageState extends State<ConnectionPage> {
           ping = '';
         });
         await flutterV2ray!.stopV2Ray();
+
+        // get ping
+        getPing();
       }
     }
     _checkConnectionStatus();
@@ -121,6 +128,11 @@ class _ConnectionPageState extends State<ConnectionPage> {
           bypassSubnets: null,
           proxyOnly: false,
         );
+
+        // get ping
+        Timer.periodic(const Duration(seconds: 10), (Timer t) {
+          getPing();
+        });
       }
     }
   }
@@ -215,8 +227,9 @@ class _ConnectionPageState extends State<ConnectionPage> {
               animate: status == 'LOADING',
               child: GestureDetector(
                 onTap: () {
-                  if (status == 'DISCONNECTED') {
-                    connect();
+                  if (status == 'DISCONNECTED' || status == 'NO_INTERNET') {
+                    checkInternetConnection();
+                    // connect();
                   } else if (status == 'CONNECTED') {
                     disconnect();
                   }
@@ -233,7 +246,9 @@ class _ConnectionPageState extends State<ConnectionPage> {
                             ? Colors.transparent
                             : status == 'CONNECTED'
                                 ? const Color(0xFF178F1D)
-                                : primaryColor,
+                                : status == 'NO_INTERNET'
+                                    ? const Color(0xFFD12619)
+                                    : primaryColor,
                         width: 8.0),
                   ),
                   child: Image.asset(
@@ -241,7 +256,9 @@ class _ConnectionPageState extends State<ConnectionPage> {
                     width: 80.0,
                     color: status == 'CONNECTED'
                         ? const Color(0xFF178F1D)
-                        : primaryColor,
+                        : status == 'NO_INTERNET'
+                            ? const Color(0xFFD12619)
+                            : primaryColor,
                   ),
                 ),
               ),
@@ -297,6 +314,26 @@ class _ConnectionPageState extends State<ConnectionPage> {
         ),
       ),
     );
+  }
+
+  // check internet connection
+  Future<void> checkInternetConnection() async {
+    try {
+      status = 'LOADING';
+      setState(() {});
+      await Future.delayed(const Duration(seconds: 4));
+
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        // connect vpn
+        connect();
+      }
+    } on SocketException catch (_) {
+      // no internet for vpn
+      setState(() {
+        status = 'NO_INTERNET';
+      });
+    }
   }
 
   // selected config
