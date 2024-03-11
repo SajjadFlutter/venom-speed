@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'common/bloc/change_index_cubit.dart';
+import 'common/bloc/change_selected_config_cubit.dart';
 import 'common/theme/my_theme.dart';
 import 'infrastructure/models/vpn_config_model/vpn_config_model.dart';
 import 'presentation/add_config/bloc/add_config_bloc.dart';
@@ -22,6 +23,7 @@ void main() async {
       providers: [
         BlocProvider(create: (context) => AddConfigBloc()),
         BlocProvider(create: (context) => ChangeIndexCubit()),
+        BlocProvider(create: (context) => ChangeSelectedConfigCubit()),
         BlocProvider(create: (context) => TimerCubit()),
       ],
       child: const MyApp(),

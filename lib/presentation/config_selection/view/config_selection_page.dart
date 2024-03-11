@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
 import '../../../common/bloc/change_index_cubit.dart';
 import '../../../configs_data/configs_data_list.dart';
-import '../../../controllers/index_controller.dart';
 import '../../../core/constants/images.dart';
 import '../../../infrastructure/models/vpn_config_model/vpn_config_model.dart';
 import '../../add_config/bloc/add_config_bloc.dart';
@@ -21,8 +19,6 @@ class ConfigSelectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // controller
-    final IndexController indexController = Get.put(IndexController());
     // theme
     var textTheme = Theme.of(context).textTheme;
     var scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
@@ -109,16 +105,15 @@ class ConfigSelectionPage extends StatelessWidget {
           // lists
           Expanded(
             child: PageView(
+              physics: const NeverScrollableScrollPhysics(),
               controller: pageController,
               children: [
                 ServerConfigsListWidget(
-                  indexController: indexController,
                   cardColor: cardColor,
                   primaryColor: primaryColor,
                   textTheme: textTheme,
                 ),
                 ManualConfigsListWidget(
-                  indexController: indexController,
                   cardColor: cardColor,
                   primaryColor: primaryColor,
                   textTheme: textTheme,
@@ -189,13 +184,11 @@ class SelectionListButton extends StatelessWidget {
 class ServerConfigsListWidget extends StatelessWidget {
   const ServerConfigsListWidget({
     super.key,
-    required this.indexController,
     required this.cardColor,
     required this.primaryColor,
     required this.textTheme,
   });
 
-  final IndexController indexController;
   final Color cardColor;
   final Color primaryColor;
   final TextTheme textTheme;
@@ -208,7 +201,6 @@ class ServerConfigsListWidget extends StatelessWidget {
         // config item
         return ConfigItem(
           index: index,
-          indexController: indexController,
           cardColor: cardColor,
           primaryColor: primaryColor,
           textTheme: textTheme,
@@ -223,13 +215,11 @@ class ServerConfigsListWidget extends StatelessWidget {
 class ManualConfigsListWidget extends StatelessWidget {
   const ManualConfigsListWidget({
     super.key,
-    required this.indexController,
     required this.cardColor,
     required this.primaryColor,
     required this.textTheme,
   });
 
-  final IndexController indexController;
   final Color cardColor;
   final Color primaryColor;
   final TextTheme textTheme;
@@ -247,7 +237,6 @@ class ManualConfigsListWidget extends StatelessWidget {
             itemBuilder: (context, index) {
               return ConfigItem(
                 index: index,
-                indexController: indexController,
                 cardColor: cardColor,
                 primaryColor: primaryColor,
                 textTheme: textTheme,
