@@ -1,10 +1,11 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unnecessary_null_comparison
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/constants/images.dart';
 import '../../../../main.dart';
@@ -43,7 +44,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
       setState(() {
         this.status = status.state;
         v2rayStatus.value = status;
-        print(status.state);
+        setConnectionStatus(status.state);
       });
     });
 
@@ -62,6 +63,8 @@ class _ConnectionPageState extends State<ConnectionPage> {
 
   Future<void> connect() async {
     configLink = ConnectionPage.selectedConfig.config!;
+    setConfigLink(ConnectionPage.selectedConfig.config!);
+    print(ConnectionPage.selectedConfig.config!);
     status = 'LOADING';
     setState(() {});
 
@@ -71,8 +74,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
       initV2ray(configLink);
     }
 
-    // ignore: unnecessary_null_comparison
-    if (await flutterV2ray!.requestPermission() != null) {
+    if (flutterV2ray != null) {
       if (await flutterV2ray!.requestPermission()) {
         await flutterV2ray!.startV2Ray(
           remark: v2rayURL!.remark,
@@ -82,29 +84,51 @@ class _ConnectionPageState extends State<ConnectionPage> {
           proxyOnly: false,
         );
         // start time
-        BlocProvider.of<TimerCubit>(context).start();
+        setConnectionStartTime();
+        BlocProvider.of<TimerCubit>(context).startTime();
       }
     }
-
-    print(flutterV2ray);
   }
 
   Future<void> disconnect() async {
-    // ignore: unnecessary_null_comparison
-    if (flutterV2ray!.stopV2Ray() != null) {
-      setState(() {
-        status = '';
-        ping = '';
-      });
-      await flutterV2ray!.stopV2Ray();
+    setConnectionStatus('DISCONNECTED');
+    if (flutterV2ray != null) {
+      if (flutterV2ray!.stopV2Ray() != null) {
+        setState(() {
+          status = '';
+          ping = '';
+        });
+        await flutterV2ray!.stopV2Ray();
+      }
+    }
+    _checkConnectionStatus();
+    BlocProvider.of<TimerCubit>(context).resetTime();
+  }
 
-      BlocProvider.of<TimerCubit>(context).reset();
+  Future<void> reconnect() async {
+    String configLink = await getConfigLink();
+    if (configLink != '') {
+      initV2ray(configLink);
+      await flutterV2ray!.stopV2Ray();
+    }
+
+    if (flutterV2ray != null) {
+      if (await flutterV2ray!.requestPermission()) {
+        await flutterV2ray!.startV2Ray(
+          remark: v2rayURL!.remark,
+          config: v2rayURL!.getFullConfiguration(),
+          blockedApps: null,
+          bypassSubnets: null,
+          proxyOnly: false,
+        );
+      }
     }
   }
 
   @override
   void initState() {
     super.initState();
+    _checkConnectionStatus();
     getSelectedConfigFromHive();
   }
 
@@ -120,8 +144,6 @@ class _ConnectionPageState extends State<ConnectionPage> {
     // device size
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    // controller
-    // final VisibleController visibleController = Get.put(VisibleController());
 
     return Scaffold(
       backgroundColor: scaffoldBackgroundColor,
@@ -277,6 +299,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
     );
   }
 
+  // selected config
   void getSelectedConfigFromHive() {
     Hive.box<VPNConfigModel>('VPNConfigModel_Box').values.forEach(
       (model) {
@@ -287,22 +310,47 @@ class _ConnectionPageState extends State<ConnectionPage> {
     );
   }
 
-  // Future<void> setSignInStatus(int lastExitTime) async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   await prefs.setInt('lastExitTime', lastExitTime);
-  // }
-  // Future<int> getSignInStatus() async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   return prefs.getInt('lastExitTime') ?? 0;
-  // }
-  // void _checkSignInStatus() async {
-  //   int isSignIn = await getSignInStatus();
-  // if (isSignIn) {
-  //   Navigator.of(context).pushReplacement(MaterialPageRoute(
-  //     builder: (context) => const ConnectionPage(),
-  //   ));
-  // } else {
-  //   return;
-  // }
-  // }
+  // connection time
+  setConnectionStartTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('connectionStartTime', DateTime.now().millisecondsSinceEpoch);
+  }
+
+  // connection status
+  setConnectionStatus(String status) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('connectionStatus', status);
+  }
+
+  Future<String> getConnectionStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('connectionStatus') ?? 'DISCONNECTED';
+  }
+
+  void _checkConnectionStatus() async {
+    String connectionStatus = await getConnectionStatus();
+    if (connectionStatus == 'CONNECTED') {
+      reconnect();
+      BlocProvider.of<TimerCubit>(context).continueTime();
+      setState(() {
+        status = 'CONNECTED';
+      });
+    } else {
+      BlocProvider.of<TimerCubit>(context).resetTime();
+      setState(() {
+        status = 'DISCONNECTED';
+      });
+    }
+  }
+
+  // config link
+  setConfigLink(String configLink) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('configLink', configLink);
+  }
+
+  Future<String> getConfigLink() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('configLink') ?? '';
+  }
 }
