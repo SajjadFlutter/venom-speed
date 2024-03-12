@@ -33,16 +33,17 @@ class ConfigItem extends StatelessWidget {
       onTap: () async {
         SelectedConfig.firsTime = false;
 
-        await Hive.box<VPNConfigModel>('VPNConfigModel_Box').putAt(
-          index,
+        Hive.box<VPNConfigModel>('selectedConfig_Box').clear();
+
+        await Hive.box<VPNConfigModel>('selectedConfig_Box').add(
           VPNConfigModel(
             countryImage: mainConfigsDataList[index].countryImage,
             countryName: mainConfigsDataList[index].countryName,
             config: mainConfigsDataList[index].config,
             ping: mainConfigsDataList[index].ping,
-            isSelected: true,
           ),
         );
+
         BlocProvider.of<ChangeSelectedConfigCubit>(context)
             .changeSelectedConfigEvent(index);
 

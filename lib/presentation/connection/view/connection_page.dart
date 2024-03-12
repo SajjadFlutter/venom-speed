@@ -25,7 +25,6 @@ class ConnectionPage extends StatefulWidget {
     countryName: 'فرانسه',
     config: 'config',
     ping: '110ms',
-    isSelected: false,
   );
 
   @override
@@ -338,11 +337,10 @@ class _ConnectionPageState extends State<ConnectionPage> {
 
   // selected config
   void getSelectedConfigFromHive() {
-    Hive.box<VPNConfigModel>('VPNConfigModel_Box').values.forEach(
+    Hive.box<VPNConfigModel>('selectedConfig_Box').values.forEach(
       (model) {
-        if (model.isSelected == true) {
-          ConnectionPage.selectedConfig = model;
-        }
+        ConnectionPage.selectedConfig = model;
+        print(model);
       },
     );
   }

@@ -127,7 +127,6 @@ class _AddConfigPageState extends State<AddConfigPage> {
                         countryName: 'آلمان',
                         config: configController.text,
                         ping: '110ms',
-                        isSelected: false,
                       ),
                     );
                   }

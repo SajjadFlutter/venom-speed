@@ -269,7 +269,7 @@ class ManualConfigsListWidget extends StatelessWidget {
 
   void getManualConfigsFromHive() {
     manualConfigsDataList.clear();
-    Hive.box<VPNConfigModel>('VPNConfigModel_Box').values.forEach(
+    Hive.box<VPNConfigModel>('manualConfigs_Box').values.forEach(
       (model) {
         manualConfigsDataList.add(model);
       },

@@ -16,7 +16,8 @@ void main() async {
   // init Hive
   await Hive.initFlutter();
   Hive.registerAdapter(VPNConfigModelAdapter());
-  await Hive.openBox<VPNConfigModel>('VPNConfigModel_Box');
+  await Hive.openBox<VPNConfigModel>('manualConfigs_Box');
+  await Hive.openBox<VPNConfigModel>('selectedConfig_Box');
 
   runApp(
     MultiBlocProvider(
