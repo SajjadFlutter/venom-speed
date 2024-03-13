@@ -1,7 +1,7 @@
 class Images {
   Images._();
 
-  static const String signinImage = 'assets/images/image.png';
+  static const String loginImage = 'assets/images/image.png';
 
   static const String logo = 'assets/logos/logo.png';
 

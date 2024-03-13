@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/constants/images.dart';
 import '../../../../main.dart';
+import '../../../common/widgets/custom_drawer.dart';
 import '../../../infrastructure/models/vpn_config_model/vpn_config_model.dart';
 import '../bloc/timer_cubit.dart';
 import 'widgets/selected_config.dart';
@@ -151,15 +152,18 @@ class _ConnectionPageState extends State<ConnectionPage> {
     var textTheme = Theme.of(context).textTheme;
     var scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
     var primaryColor = Theme.of(context).primaryColor;
-    var cardColor = Theme.of(context).cardColor;
+    var secondaryHeaderColor = Theme.of(context).secondaryHeaderColor;
     // device size
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: scaffoldBackgroundColor,
-      drawer: Drawer(
-        backgroundColor: scaffoldBackgroundColor,
+      drawer: CustomDrawer(
+        scaffoldBackgroundColor: scaffoldBackgroundColor,
+        height: height,
+        secondaryHeaderColor: secondaryHeaderColor,
+        textTheme: textTheme,
       ),
       // appbar
       appBar: AppBar(
@@ -186,7 +190,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 height: 20.0,
                 decoration: BoxDecoration(
-                  color: cardColor,
+                  color: secondaryHeaderColor,
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: Image.asset(Images.menu, width: 20.0),
@@ -203,7 +207,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
             SizedBox(height: height * 0.04),
             // config selection button
             SelectedConfig(
-              cardColor: cardColor,
+              secondaryHeaderColor: secondaryHeaderColor,
               textTheme: textTheme,
               ping: ping,
             ),
@@ -238,7 +242,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
                   margin: const EdgeInsets.symmetric(vertical: 20.0),
                   padding: const EdgeInsets.all(60.0),
                   decoration: BoxDecoration(
-                    color: cardColor,
+                    color: secondaryHeaderColor,
                     shape: BoxShape.circle,
                     border: Border.all(
                         color: status == 'LOADING'
@@ -293,7 +297,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
                       width: width,
                       height: 16.0,
                       decoration: BoxDecoration(
-                        color: cardColor,
+                        color: secondaryHeaderColor,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                     ),
@@ -340,7 +344,6 @@ class _ConnectionPageState extends State<ConnectionPage> {
     Hive.box<VPNConfigModel>('selectedConfig_Box').values.forEach(
       (model) {
         ConnectionPage.selectedConfig = model;
-        print(model);
       },
     );
   }

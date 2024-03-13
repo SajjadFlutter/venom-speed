@@ -23,7 +23,7 @@ class ConfigSelectionPage extends StatelessWidget {
     var textTheme = Theme.of(context).textTheme;
     var scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
     var primaryColor = Theme.of(context).primaryColor;
-    var cardColor = Theme.of(context).cardColor;
+    var secondaryHeaderColor = Theme.of(context).secondaryHeaderColor;
     // device size
     var width = MediaQuery.of(context).size.width;
     // var height = MediaQuery.of(context).size.height;
@@ -56,7 +56,7 @@ class ConfigSelectionPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 height: 20.0,
                 decoration: BoxDecoration(
-                  color: cardColor,
+                  color: secondaryHeaderColor,
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: Image.asset(Images.menu, width: 20.0),
@@ -84,14 +84,14 @@ class ConfigSelectionPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SelectionListButton(
-                      cardColor: cardColor,
+                      secondaryHeaderColor: secondaryHeaderColor,
                       title: 'کانفیگ اختصاصی',
                       state: state,
                       index: 0,
                       pageController: pageController,
                     ),
                     SelectionListButton(
-                      cardColor: cardColor,
+                      secondaryHeaderColor: secondaryHeaderColor,
                       title: 'کانفیگ دستی',
                       state: state,
                       index: 1,
@@ -109,12 +109,12 @@ class ConfigSelectionPage extends StatelessWidget {
               controller: pageController,
               children: [
                 ServerConfigsListWidget(
-                  cardColor: cardColor,
+                  secondaryHeaderColor: secondaryHeaderColor,
                   primaryColor: primaryColor,
                   textTheme: textTheme,
                 ),
                 ManualConfigsListWidget(
-                  cardColor: cardColor,
+                  secondaryHeaderColor: secondaryHeaderColor,
                   primaryColor: primaryColor,
                   textTheme: textTheme,
                 ),
@@ -130,14 +130,14 @@ class ConfigSelectionPage extends StatelessWidget {
 class SelectionListButton extends StatelessWidget {
   const SelectionListButton({
     super.key,
-    required this.cardColor,
+    required this.secondaryHeaderColor,
     required this.title,
     required this.state,
     required this.index,
     required this.pageController,
   });
 
-  final Color cardColor;
+  final Color secondaryHeaderColor;
   final int state;
   final int index;
   final String title;
@@ -172,7 +172,7 @@ class SelectionListButton extends StatelessWidget {
         width: width / 2 - 32.0,
         height: 50.0,
         decoration: BoxDecoration(
-          color: index == state ? cardColor : Colors.transparent,
+          color: index == state ? secondaryHeaderColor : Colors.transparent,
           borderRadius: BorderRadius.circular(15.0),
         ),
         child: Center(child: Text(title)),
@@ -184,12 +184,12 @@ class SelectionListButton extends StatelessWidget {
 class ServerConfigsListWidget extends StatelessWidget {
   const ServerConfigsListWidget({
     super.key,
-    required this.cardColor,
+    required this.secondaryHeaderColor,
     required this.primaryColor,
     required this.textTheme,
   });
 
-  final Color cardColor;
+  final Color secondaryHeaderColor;
   final Color primaryColor;
   final TextTheme textTheme;
 
@@ -201,7 +201,7 @@ class ServerConfigsListWidget extends StatelessWidget {
         // config item
         return ConfigItem(
           index: index,
-          cardColor: cardColor,
+          secondaryHeaderColor: secondaryHeaderColor,
           primaryColor: primaryColor,
           textTheme: textTheme,
         );
@@ -215,12 +215,12 @@ class ServerConfigsListWidget extends StatelessWidget {
 class ManualConfigsListWidget extends StatelessWidget {
   const ManualConfigsListWidget({
     super.key,
-    required this.cardColor,
+    required this.secondaryHeaderColor,
     required this.primaryColor,
     required this.textTheme,
   });
 
-  final Color cardColor;
+  final Color secondaryHeaderColor;
   final Color primaryColor;
   final TextTheme textTheme;
 
@@ -237,7 +237,7 @@ class ManualConfigsListWidget extends StatelessWidget {
             itemBuilder: (context, index) {
               return ConfigItem(
                 index: index,
-                cardColor: cardColor,
+                secondaryHeaderColor: secondaryHeaderColor,
                 primaryColor: primaryColor,
                 textTheme: textTheme,
               );

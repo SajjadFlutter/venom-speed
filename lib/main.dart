@@ -10,7 +10,7 @@ import 'common/theme/my_theme.dart';
 import 'infrastructure/models/vpn_config_model/vpn_config_model.dart';
 import 'presentation/add_config/bloc/add_config_bloc.dart';
 import 'presentation/connection/bloc/timer_cubit.dart';
-import 'presentation/signin/signin_page.dart';
+import 'presentation/login/login_page.dart';
 
 void main() async {
   // init Hive
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
         Locale('fa'), // persian(farsi)
         Locale('en'), // English
       ],
-      home: const SignInPage(),
+      home: const LoginPage(),
     );
   }
 

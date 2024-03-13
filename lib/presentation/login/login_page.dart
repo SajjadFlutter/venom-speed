@@ -7,14 +7,14 @@ import '../../../core/constants/images.dart';
 import '../../main.dart';
 import '../connection/view/connection_page.dart';
 
-class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _LoginPageState extends State<LoginPage> {
   // Form
   final _formKey = GlobalKey<FormState>();
   TextEditingController usernameController = TextEditingController();
@@ -23,7 +23,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   void initState() {
     super.initState();
-    _checkSignInStatus();
+    _checkLoginStatus();
   }
 
   @override
@@ -41,7 +41,7 @@ class _SignInPageState extends State<SignInPage> {
     var textTheme = Theme.of(context).textTheme;
     var scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
     var primaryColor = Theme.of(context).primaryColor;
-    var cardColor = Theme.of(context).cardColor;
+    var secondaryHeaderColor = Theme.of(context).secondaryHeaderColor;
     // device size
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
@@ -60,7 +60,7 @@ class _SignInPageState extends State<SignInPage> {
                     alignment: Alignment.centerLeft,
                     children: [
                       Image.asset(
-                        Images.signinImage,
+                        Images.loginImage,
                         width: width,
                         height: height * 0.45,
                         fit: BoxFit.fitWidth,
@@ -122,7 +122,7 @@ class _SignInPageState extends State<SignInPage> {
                               color: Color(0xFF7070B1),
                             ),
                             filled: true,
-                            fillColor: cardColor,
+                            fillColor: secondaryHeaderColor,
                             border: const OutlineInputBorder(
                               gapPadding: 20.0,
                               borderRadius:
@@ -156,7 +156,7 @@ class _SignInPageState extends State<SignInPage> {
                               color: Color.fromARGB(255, 112, 112, 177),
                             ),
                             filled: true,
-                            fillColor: cardColor,
+                            fillColor: secondaryHeaderColor,
                             border: const OutlineInputBorder(
                               gapPadding: 20.0,
                               borderRadius:
@@ -180,31 +180,8 @@ class _SignInPageState extends State<SignInPage> {
                         // accept the terms
                         Padding(
                           padding: const EdgeInsets.only(right: 30.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('با ورود شما شرایط و قوانین را می پذیرید',
-                                  style: textTheme.labelMedium),
-                              const SizedBox(height: 10.0),
-                              // buy subscription button
-                              SizedBox(
-                                width: 150,
-                                height: 40,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF178F1D),
-                                    elevation: 0.0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
-                                  ),
-                                  onPressed: () {},
-                                  child: Text('خرید اشتراک',
-                                      style: textTheme.labelMedium),
-                                ),
-                              ),
-                            ],
-                          ),
+                          child: Text('با ورود شما شرایط و قوانین را می پذیرید',
+                              style: textTheme.labelMedium),
                         ),
                         SizedBox(height: height * 0.025),
                         // sign in button
@@ -223,7 +200,7 @@ class _SignInPageState extends State<SignInPage> {
                               // Validate returns true if the form is valid, or false otherwise.
                               if (_formKey.currentState!.validate()) {
                                 // save data
-                                setSignInStatus(true);
+                                setLoginStatus(true);
 
                                 var route = MaterialPageRoute(
                                   builder: (context) => const ConnectionPage(),
@@ -232,6 +209,43 @@ class _SignInPageState extends State<SignInPage> {
                               }
                             },
                             child: Text('ادامه', style: textTheme.labelLarge),
+                          ),
+                        ),
+                        const SizedBox(height: 15.0),
+                        // buy subscription button
+                        Center(
+                          child: SizedBox(
+                            width: 260,
+                            height: 40,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF178F1D),
+                                elevation: 0.0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                              ),
+                              onPressed: () {},
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Transform(
+                                    transform: Matrix4.rotationY(110) *
+                                        Matrix4.rotationX(110),
+                                    alignment: Alignment.center,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      color: Colors.grey.shade100,
+                                      size: 18.0,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5.0),
+                                  Text('خرید اشتراک و تست رایگان',
+                                      style: textTheme.labelMedium),
+                                  const SizedBox(width: 6.0),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -246,19 +260,19 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  Future<void> setSignInStatus(bool isSignIn) async {
+  Future<void> setLoginStatus(bool isLogin) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isSignIn', isSignIn);
+    await prefs.setBool('isLogin', isLogin);
   }
 
-  Future<bool> getSignInStatus() async {
+  Future<bool> getLoginStatus() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('isSignIn') ?? false;
+    return prefs.getBool('isLogin') ?? false;
   }
 
-  void _checkSignInStatus() async {
-    bool isSignIn = await getSignInStatus();
-    if (isSignIn) {
+  void _checkLoginStatus() async {
+    bool isLogin = await getLoginStatus();
+    if (isLogin) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const ConnectionPage(),
       ));

@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 class CustomIconButton extends StatelessWidget {
   const CustomIconButton({
     super.key,
-    required this.cardColor,
+    required this.secondaryHeaderColor,
     required this.function,
   });
 
-  final Color cardColor;
+  final Color secondaryHeaderColor;
   final Function() function;
 
   @override
@@ -19,7 +19,7 @@ class CustomIconButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         height: 20.0,
         decoration: BoxDecoration(
-          color: cardColor,
+          color: secondaryHeaderColor,
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: const Icon(Icons.arrow_back_ios_new_rounded),

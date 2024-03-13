@@ -7,12 +7,12 @@ import '../connection_page.dart';
 class SelectedConfig extends StatelessWidget {
   const SelectedConfig({
     super.key,
-    required this.cardColor,
+    required this.secondaryHeaderColor,
     required this.textTheme,
     required this.ping,
   });
 
-  final Color cardColor;
+  final Color secondaryHeaderColor;
   final TextTheme textTheme;
   final String ping;
 
@@ -37,7 +37,7 @@ class SelectedConfig extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 18.0),
         decoration: BoxDecoration(
-          color: cardColor,
+          color: secondaryHeaderColor,
           borderRadius: BorderRadius.circular(20.0),
         ),
         child: Row(

@@ -32,7 +32,7 @@ class _AddConfigPageState extends State<AddConfigPage> {
     var textTheme = Theme.of(context).textTheme;
     var scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
     var primaryColor = Theme.of(context).primaryColor;
-    var cardColor = Theme.of(context).cardColor;
+    var secondaryHeaderColor = Theme.of(context).secondaryHeaderColor;
     // device size
     // var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
@@ -56,7 +56,8 @@ class _AddConfigPageState extends State<AddConfigPage> {
         ),
         actions: [
           CustomIconButton(
-              cardColor: cardColor, function: () => Navigator.pop(context)),
+              secondaryHeaderColor: secondaryHeaderColor,
+              function: () => Navigator.pop(context)),
         ],
       ),
       // body
@@ -89,7 +90,7 @@ class _AddConfigPageState extends State<AddConfigPage> {
                     color: Color(0xFF7070B1),
                   ),
                   filled: true,
-                  fillColor: cardColor,
+                  fillColor: secondaryHeaderColor,
                   border: const OutlineInputBorder(
                     gapPadding: 20.0,
                     borderRadius: BorderRadius.all(Radius.circular(20)),

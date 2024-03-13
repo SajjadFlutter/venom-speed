@@ -17,13 +17,13 @@ class ConfigItem extends StatelessWidget {
   const ConfigItem({
     super.key,
     required this.index,
-    required this.cardColor,
+    required this.secondaryHeaderColor,
     required this.primaryColor,
     required this.textTheme,
   });
 
   final int index;
-  final Color cardColor;
+  final Color secondaryHeaderColor;
   final Color primaryColor;
   final TextTheme textTheme;
 
@@ -63,7 +63,7 @@ class ConfigItem extends StatelessWidget {
             padding:
                 const EdgeInsets.symmetric(vertical: 12.0, horizontal: 18.0),
             decoration: BoxDecoration(
-              color: cardColor,
+              color: secondaryHeaderColor,
               borderRadius: BorderRadius.circular(20.0),
               border: Border.all(
                 width: 1.5,

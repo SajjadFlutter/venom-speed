@@ -33,6 +33,6 @@ class MyTheme {
     ),
     scaffoldBackgroundColor: const Color(0xff07074f),
     primaryColor: const Color(0xFFffb11b),
-    cardColor: const Color(0xFF27286b),
+    secondaryHeaderColor: const Color(0xFF27286b),
   );
 }
