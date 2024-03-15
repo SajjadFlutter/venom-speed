@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +9,10 @@ import 'common/bloc/change_index_cubit.dart';
 import 'common/bloc/change_selected_config_cubit.dart';
 import 'common/theme/my_theme.dart';
 import 'infrastructure/models/vpn_config_model/vpn_config_model.dart';
+import 'infrastructure/providers/server_api_provdier.dart';
+import 'infrastructure/repository/server_repository.dart';
 import 'presentation/add_config/bloc/add_config_bloc.dart';
+import 'presentation/config_selection/bloc/server_cubit/server_cubit.dart';
 import 'presentation/connection/bloc/timer_cubit.dart';
 import 'presentation/login/login_page.dart';
 
@@ -26,6 +30,11 @@ void main() async {
         BlocProvider(create: (context) => ChangeIndexCubit()),
         BlocProvider(create: (context) => ChangeSelectedConfigCubit()),
         BlocProvider(create: (context) => TimerCubit()),
+        BlocProvider(
+          create: (context) => ServerCubit(
+            ServerRepository(ServerApiProvider(Dio())),
+          ),
+        ),
       ],
       child: const MyApp(),
     ),

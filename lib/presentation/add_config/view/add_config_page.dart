@@ -122,7 +122,7 @@ class _AddConfigPageState extends State<AddConfigPage> {
                 ),
                 onPressed: () async {
                   if (configController.text.isNotEmpty) {
-                    await Hive.box<VPNConfigModel>('VPNConfigModel_Box').add(
+                    await Hive.box<VPNConfigModel>('manualConfigs_Box').add(
                       VPNConfigModel(
                         countryImage: Images.germanyImage,
                         countryName: 'آلمان',
@@ -130,11 +130,11 @@ class _AddConfigPageState extends State<AddConfigPage> {
                         ping: '110ms',
                       ),
                     );
+                  BlocProvider.of<AddConfigBloc>(context).add(AddConfigEvent());
+                  Navigator.pop(context);
                   }
 
-                  BlocProvider.of<AddConfigBloc>(context).add(AddConfigEvent());
 
-                  Navigator.pop(context);
                 },
                 child: Text('افزودن کانفیگ', style: textTheme.labelLarge),
               ),

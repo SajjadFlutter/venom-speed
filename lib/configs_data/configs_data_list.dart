@@ -75,5 +75,3 @@ List<VPNConfigModel> serverConfigsDataList = [
 ];
 
 List<VPNConfigModel> manualConfigsDataList = [];
-
-List<VPNConfigModel> mainConfigsDataList = serverConfigsDataList;

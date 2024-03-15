@@ -24,7 +24,8 @@ class ConnectionPage extends StatefulWidget {
   static VPNConfigModel selectedConfig = VPNConfigModel(
     countryImage: Images.franceImage,
     countryName: 'فرانسه',
-    config: 'config',
+    config:
+        'vless://b9ad895b-12ac-40fc-a5ac-a5b2a1285001@172.67.183.26:443?encryption=none&security=tls&sni=3k.pureboy.eu.org&type=ws&host=3k.pureboy.eu.org&path=%2F%3Fed%3D2048#%D8%B9%D8%B6%D9%88%20%D8%B4%D9%88%20%3A%20%40zibanabz',
     ping: '110ms',
   );
 
@@ -158,7 +159,6 @@ class _ConnectionPageState extends State<ConnectionPage> {
     var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: scaffoldBackgroundColor,
       drawer: CustomDrawer(
         scaffoldBackgroundColor: scaffoldBackgroundColor,
         height: height,
@@ -207,6 +207,7 @@ class _ConnectionPageState extends State<ConnectionPage> {
             SizedBox(height: height * 0.04),
             // config selection button
             SelectedConfig(
+              primaryColor: primaryColor,
               secondaryHeaderColor: secondaryHeaderColor,
               textTheme: textTheme,
               ping: ping,
@@ -340,12 +341,14 @@ class _ConnectionPageState extends State<ConnectionPage> {
   }
 
   // selected config
-  void getSelectedConfigFromHive() {
-    Hive.box<VPNConfigModel>('selectedConfig_Box').values.forEach(
-      (model) {
-        ConnectionPage.selectedConfig = model;
-      },
-    );
+  void getSelectedConfigFromHive() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var isFirstTime = prefs.getBool('isFirstTime') ?? true;
+
+    if (isFirstTime == false) {
+      ConnectionPage.selectedConfig =
+          Hive.box<VPNConfigModel>('selectedConfig_Box').values.last;
+    }
   }
 
   // connection time

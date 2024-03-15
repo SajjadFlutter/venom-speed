@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
-import 'package:venom_speed/presentation/config_selection/view/config_selection_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../common/bloc/change_selected_config_cubit.dart';
 import '../../../../configs_data/configs_data_list.dart';
@@ -11,10 +11,10 @@ import '../../../../infrastructure/models/vpn_config_model/vpn_config_model.dart
 import '../../../add_config/bloc/add_config_bloc.dart';
 import '../../../add_config/bloc/add_config_event.dart';
 import '../../../connection/view/connection_page.dart';
-import '../../../connection/view/widgets/selected_config.dart';
+import '../select_config_page.dart';
 
-class ConfigItem extends StatelessWidget {
-  const ConfigItem({
+class ManualConfigItem extends StatelessWidget {
+  const ManualConfigItem({
     super.key,
     required this.index,
     required this.secondaryHeaderColor,
@@ -31,16 +31,16 @@ class ConfigItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        SelectedConfig.firsTime = false;
-
-        Hive.box<VPNConfigModel>('selectedConfig_Box').clear();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('isFirstTime', false);
+        prefs.setString('configType', 'manual');
 
         await Hive.box<VPNConfigModel>('selectedConfig_Box').add(
           VPNConfigModel(
-            countryImage: mainConfigsDataList[index].countryImage,
-            countryName: mainConfigsDataList[index].countryName,
-            config: mainConfigsDataList[index].config,
-            ping: mainConfigsDataList[index].ping,
+            countryImage: manualConfigsDataList[index].countryImage,
+            countryName: manualConfigsDataList[index].countryName,
+            config: manualConfigsDataList[index].config,
+            ping: manualConfigsDataList[index].ping,
           ),
         );
 
@@ -56,7 +56,7 @@ class ConfigItem extends StatelessWidget {
           return Container(
             margin: EdgeInsets.only(
               top: index == 0 ? 10.0 : 0.0,
-              bottom: index == mainConfigsDataList.length - 1 ? 25.0 : 0.0,
+              bottom: index == manualConfigsDataList.length - 1 ? 25.0 : 0.0,
               right: 20.0,
               left: 20.0,
             ),
@@ -76,18 +76,18 @@ class ConfigItem extends StatelessWidget {
                 Row(
                   children: [
                     Image.asset(
-                      mainConfigsDataList[index].countryImage!,
+                      manualConfigsDataList[index].countryImage!,
                       width: 48.0,
                     ),
                     const SizedBox(width: 15.0),
                     Column(
                       children: [
                         Text(
-                          mainConfigsDataList[index].countryName!,
+                          manualConfigsDataList[index].countryName!,
                           style: textTheme.labelMedium,
                         ),
                         const SizedBox(height: 10.0),
-                        Text(mainConfigsDataList[index].ping!),
+                        Text(manualConfigsDataList[index].ping!),
                       ],
                     ),
                   ],
@@ -116,13 +116,13 @@ class ConfigItem extends StatelessWidget {
                     ),
                     // delete config item
                     Visibility(
-                      visible: ConfigSelectionPage.configTitle == 'کانفیگ دستی',
+                      visible: SelectConfigPage.configTitle == 'کانفیگ دستی',
                       child: Padding(
                         padding: const EdgeInsets.only(right: 12.0),
                         child: GestureDetector(
                           onTap: () async {
                             manualConfigsDataList.removeAt(index);
-                            await Hive.box<VPNConfigModel>('VPNConfigModel_Box')
+                            await Hive.box<VPNConfigModel>('manualConfigs_Box')
                                 .deleteAt(index);
 
                             BlocProvider.of<AddConfigBloc>(context)

@@ -1,37 +1,41 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:venom_speed/configs_data/configs_data_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../config_selection/view/config_selection_page.dart';
+import '../../../config_selection/view/select_config_page.dart';
 import '../connection_page.dart';
 
 class SelectedConfig extends StatelessWidget {
   const SelectedConfig({
     super.key,
+    required this.primaryColor,
     required this.secondaryHeaderColor,
     required this.textTheme,
     required this.ping,
   });
 
+  final Color primaryColor;
   final Color secondaryHeaderColor;
   final TextTheme textTheme;
   final String ping;
 
-  static bool firsTime = true;
+  static bool isFirstTime = true;
+  static String configType = '';
 
   @override
   Widget build(BuildContext context) {
+    getConfigType();
+
     return GestureDetector(
       onTap: () {
         // go to config selection page
-        if (firsTime) {
-          ConfigSelectionPage.pageController = PageController(initialPage: 0);
-          mainConfigsDataList = serverConfigsDataList;
+        if (isFirstTime) {
+          SelectConfigPage.pageController = PageController(initialPage: 0);
         } else {
-          ConfigSelectionPage.pageController = PageController(initialPage: 1);
-          mainConfigsDataList = manualConfigsDataList;
+          SelectConfigPage.pageController = PageController(initialPage: 1);
         }
-        var route = MaterialPageRoute(
-            builder: (context) => const ConfigSelectionPage());
+        var route =
+            MaterialPageRoute(builder: (context) => const SelectConfigPage());
         Navigator.push(context, route);
       },
       child: Container(
@@ -45,10 +49,28 @@ class SelectedConfig extends StatelessWidget {
           children: [
             Row(
               children: [
-                Image.asset(
-                  ConnectionPage.selectedConfig.countryImage!,
-                  width: 48.0,
-                ),
+                SelectedConfig.configType == 'server'
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(40.0),
+                        child: CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          imageUrl: ConnectionPage.selectedConfig.countryImage!,
+                          width: 48.0,
+                          height: 48.0,
+                          placeholder: (context, url) => SizedBox(
+                              width: 30.0,
+                              child: CircularProgressIndicator(
+                                  color: primaryColor)),
+                          errorWidget: (context, url, error) => Image.asset(
+                            ConnectionPage.selectedConfig.countryImage!,
+                            width: 38.0,
+                          ),
+                        ),
+                      )
+                    : Image.asset(
+                        ConnectionPage.selectedConfig.countryImage!,
+                        width: 48.0,
+                      ),
                 const SizedBox(width: 15.0),
                 Text(
                   ConnectionPage.selectedConfig.countryName!,
@@ -61,5 +83,10 @@ class SelectedConfig extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void getConfigType() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SelectedConfig.configType = prefs.getString('configType') ?? '';
   }
 }
