@@ -10,15 +10,16 @@ class LoginApiProvider {
     required String password,
   }) async {
     try {
-      await dio.post(
-        'http://shaano.ir/api/login',
+      var response = await dio.post(
+        r'http://shaano.ir/api/login?token=$2y$10$QSU8btqdlpbdv/J1rC/q0u42pHf0KrDZNeCteBF3jRZdR2XEY8tUG',
         data: {
           'email': email,
           'password': password,
-          'token':
-              r'$2y$10$/1CY5P6aO5DDDtIvCx9BEOkYtpdlKn7Nl8eJDVE8./TE9S1HQGfqi'
         },
       );
+      print(response.data['auth']);
+      print(response.data);
+      return (response);
     } catch (e) {
       return;
     }

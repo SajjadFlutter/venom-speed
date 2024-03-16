@@ -14,7 +14,8 @@ import 'infrastructure/repository/server_repository.dart';
 import 'presentation/add_config/bloc/add_config_bloc.dart';
 import 'presentation/config_selection/bloc/server_cubit/server_cubit.dart';
 import 'presentation/connection/bloc/timer_cubit.dart';
-import 'presentation/login/login_page.dart';
+import 'presentation/login/bloc/cubit/login_cubit.dart';
+import 'presentation/login/view/login_page.dart';
 
 void main() async {
   // init Hive
@@ -30,6 +31,7 @@ void main() async {
         BlocProvider(create: (context) => ChangeIndexCubit()),
         BlocProvider(create: (context) => ChangeSelectedConfigCubit()),
         BlocProvider(create: (context) => TimerCubit()),
+        BlocProvider(create: (context) => LoginCubit()),
         BlocProvider(
           create: (context) => ServerCubit(
             ServerRepository(ServerApiProvider(Dio())),

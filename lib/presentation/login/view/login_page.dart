@@ -1,11 +1,16 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-import '../../../core/constants/images.dart';
-import '../../main.dart';
-import '../connection/view/connection_page.dart';
+import '../../../../core/constants/images.dart';
+import '../../../main.dart';
+import '../../connection/view/connection_page.dart';
+import '../bloc/cubit/login_cubit.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,18 +22,18 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   // Form
   final _formKey = GlobalKey<FormState>();
-  TextEditingController usernameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
+    _checkLoginPageStatus();
   }
 
   @override
   void dispose() {
-    usernameController.dispose();
+    emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
@@ -107,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(height: height * 0.02),
                         // username
                         TextFormField(
-                          controller: usernameController,
+                          controller: emailController,
                           cursorColor: primaryColor,
                           style: TextStyle(
                             color: Colors.grey.shade100,
@@ -116,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 30.0, vertical: 18.0),
-                            hintText: 'نام کاربری',
+                            hintText: 'ایمیل یا نام کاربری',
                             hintStyle: const TextStyle(
                               fontSize: 15.0,
                               color: Color(0xFF7070B1),
@@ -133,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                           // The validator receives the text that the user has entered.
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'لطفا نام کاربری را وارد کنید.';
+                              return 'لطفا ایمیل یا نام کاربری خود را وارد کنید.';
                             }
                             return null;
                           },
@@ -196,19 +201,56 @@ class _LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               // Validate returns true if the form is valid, or false otherwise.
                               if (_formKey.currentState!.validate()) {
-                                // save data
-                                setLoginStatus(true);
-
-                                var route = MaterialPageRoute(
-                                  builder: (context) => const ConnectionPage(),
+                                // call login api
+                                BlocProvider.of<LoginCubit>(context)
+                                    .checkLoginEvent(
+                                  emailController.text,
+                                  passwordController.text,
                                 );
-                                Navigator.push(context, route);
                               }
                             },
-                            child: Text('ادامه', style: textTheme.labelLarge),
+                            child: BlocConsumer<LoginCubit, LoginState>(
+                              listener: (context, state) {
+                                if (state.loginStatus is LoginOn) {
+                                  var route = MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ConnectionPage(),
+                                  );
+                                  Navigator.push(context, route);
+                                  // save data
+                                  setLoginStatus(true);
+                                }
+                                if (state.loginStatus is LoginOff) {
+                                  showTopSnackBar(
+                                    Overlay.of(context),
+                                    CustomSnackBar.error(
+                                      textStyle: textTheme.labelMedium!,
+                                      message:
+                                          "نام کاربری یا رمز عبور صحیح نمی باشد!",
+                                    ),
+                                  );
+                                }
+                              },
+                              builder: (context, state) {
+                                // Loading
+                                if (state.loginStatus is LoadingLogin) {
+                                  return SpinKitThreeBounce(
+                                    color: Colors.grey.shade900,
+                                    size: 20.0,
+                                  );
+                                }
+                                // Login off
+                                if (state.loginStatus is LoginInitial ||
+                                    state.loginStatus is LoginOff) {
+                                  return Text('ادامه',
+                                      style: textTheme.labelLarge);
+                                }
+                                return Container();
+                              },
+                            ),
                           ),
                         ),
                         const SizedBox(height: 15.0),
@@ -270,7 +312,7 @@ class _LoginPageState extends State<LoginPage> {
     return prefs.getBool('isLogin') ?? false;
   }
 
-  void _checkLoginStatus() async {
+  void _checkLoginPageStatus() async {
     bool isLogin = await getLoginStatus();
     if (isLogin) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
